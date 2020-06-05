@@ -55,7 +55,10 @@ def keyExpansion(key):
             expandedKey.append(xorWord(oldKey, subbedKey))
         else:
             expandedKey.append(xorWord(expandedKey[i-N], expandedKey[i-1]))
-    return expandedKey
+    roundKeys = []
+    for i in range(0, 60, 4):
+        roundKeys.append([expandedKey[i], expandedKey[i+1], expandedKey[i+2], expandedKey[i+3]])
+    return roundKeys
 
 
 key = 0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef
