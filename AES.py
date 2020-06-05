@@ -61,5 +61,12 @@ def keyExpansion(key):
     return roundKeys
 
 
+def messageToState(mes):
+    out = []
+    for i in range(0, 16, 4):
+        out.append([])
+        for j in range(4):
+            out[-1].append(ord(mes[i + j]))
+    return out
 key = 0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef
 print(len(keyExpansion(key)))
