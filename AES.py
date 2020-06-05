@@ -79,8 +79,26 @@ def shiftRows(state):
     return out
 
 
+def rotateState(state):
+    rotatedState = [[], [], [], []]
+    for row  in range(4):
+        for column in range(4):
+            rotatedState[row].append(state[column][row])
+    return rotatedState
+
 def mixColumns(state):
-    pass
+    rotated = rotateState(state)
+    constants = [[2, 3, 1, 1], [1, 2, 3, 1], [1, 1, 2, 3], [3, 1, 1, 2]]
+    for a, b in zip(rotated, constants):
+        c = [a[0] * b[0],
+             (a[1]*b[0]) ^ (a[0]*b[1]),
+             (a[2]*b[0]) ^ (a[1]*b[1]) ^ (a[0]*b[2]),
+             (a[3]*b[0]) ^ (a[2]*b[1]) ^ (a[1]*b[2]) ^ (a[0]*b[3]),
+             (a[3]*b[1]) ^ (a[2]*b[2]) ^ (a[1]*b[3]),
+             (a[3]*b[2]) ^ (a[2]*b[3]),
+             a[3]*b[3]]
+        d = [c[0] ^ c[4], c[1] ^ c[5], c[2] ^ c[6], c[3]]
+        print(d)
 
 sBoxLookup = [[0x63, 0x7c, 0x77, 0x7b, 0xf2, 0x6b, 0x6f, 0xc5, 0x30, 0x1, 0x67, 0x2b, 0xfe, 0xd7, 0xab, 0x76],
               [0xca, 0x82, 0xc9, 0x7d, 0xfa, 0x59, 0x47, 0xf0, 0xad, 0xd4, 0xa2, 0xaf, 0x9c, 0xa4, 0x72, 0xc0],
@@ -102,5 +120,5 @@ sBoxLookup = [[0x63, 0x7c, 0x77, 0x7b, 0xf2, 0x6b, 0x6f, 0xc5, 0x30, 0x1, 0x67, 
 key = 0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef
 message = 'Hello, World! 12'
 state = messageToState(message)
-testState = [[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12], [13, 14, 15, 16]]
-print(shiftRows(testState))
+testState = [[219]*4, [19]*4, [83]*4, [69]*4]
+mixColumns(testState)
