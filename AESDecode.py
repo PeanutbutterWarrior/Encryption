@@ -88,6 +88,7 @@ def multiply(a, b):
             p ^= a
         aHighSet = a | 0b01111111 == 255
         a <<= 1
+        a &= 0xff
         if aHighSet:
             a ^= 0x1b
         b >>= 1
