@@ -109,6 +109,31 @@ def mixColumns(state):
     return out
 
 
+def AESEncode(keys, snippet):
+    state = messageToState(snippet)
+    keyIndex = 0
+    state = addRoundKey(state, keys[keyIndex])
+    keyIndex += 1
+
+    for i in range(13):
+        state = subBytes(state)
+        state = shiftRows(state)
+        state = mixColumns(state)
+        state = addRoundKey(state, keys[keyIndex])
+        keyIndex += 1
+    state = subBytes(state)
+    state = shiftRows(state)
+    state = addRoundKey(state, keys[keyIndex])
+    output = []
+    for i in state:
+        for j in i:
+            out = hex(j)[2:]
+            if len(out) == 1:
+                out = '0' + out
+            output.append(out)
+    return output
+
+
 sBoxLookup = [[0x63, 0x7c, 0x77, 0x7b, 0xf2, 0x6b, 0x6f, 0xc5, 0x30, 0x1, 0x67, 0x2b, 0xfe, 0xd7, 0xab, 0x76],
               [0xca, 0x82, 0xc9, 0x7d, 0xfa, 0x59, 0x47, 0xf0, 0xad, 0xd4, 0xa2, 0xaf, 0x9c, 0xa4, 0x72, 0xc0],
               [0xb7, 0xfd, 0x93, 0x26, 0x36, 0x3f, 0xf7, 0xcc, 0x34, 0xa5, 0xe5, 0xf1, 0x71, 0xd8, 0x31, 0x15],
@@ -130,31 +155,8 @@ key = random.randint(0x100000000000000000000000000000000000000000000000000000000
                      0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff)
 print(f'Key: {hex(key)}')
 message = input('Message: ')
-if len(message) > 16:
-    print('Message too long')
-message += chr(0) * (16 - len(message))
+message += chr(0) * (16 - len(message)%16)
 
 keys = keyExpansion(key)
-state = messageToState(message)
-keyIndex = 0
-state = addRoundKey(state, keys[keyIndex])
-keyIndex += 1
 
-for i in range(13):
-    state = subBytes(state)
-    state = shiftRows(state)
-    state = mixColumns(state)
-    state = addRoundKey(state, keys[keyIndex])
-    keyIndex += 1
-state = subBytes(state)
-state = shiftRows(state)
-state = addRoundKey(state, keys[keyIndex])
-output = []
-for i in state:
-    for j in i:
-        out = hex(j)[2:]
-        if len(out) == 1:
-            out = '0' + out
-        output.append(out)
 
-print(f'Ciphertext: {" ".join(output)}')
