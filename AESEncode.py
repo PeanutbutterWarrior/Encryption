@@ -131,7 +131,7 @@ def AESEncode(keys, snippet):
             if len(out) == 1:
                 out = '0' + out
             output.append(out)
-    return output
+    return ' '.join(output)
 
 
 sBoxLookup = [[0x63, 0x7c, 0x77, 0x7b, 0xf2, 0x6b, 0x6f, 0xc5, 0x30, 0x1, 0x67, 0x2b, 0xfe, 0xd7, 0xab, 0x76],
@@ -151,12 +151,23 @@ sBoxLookup = [[0x63, 0x7c, 0x77, 0x7b, 0xf2, 0x6b, 0x6f, 0xc5, 0x30, 0x1, 0x67, 
               [0xe1, 0xf8, 0x98, 0x11, 0x69, 0xd9, 0x8e, 0x94, 0x9b, 0x1e, 0x87, 0xe9, 0xce, 0x55, 0x28, 0xdf],
               [0x8c, 0xa1, 0x89, 0x0d, 0xbf, 0xe6, 0x42, 0x68, 0x41, 0x99, 0x2d, 0x0f, 0xb0, 0x54, 0xbb, 0x16]]
 
+message = input('Message: ')
+# Buffer message with null characters
+message += chr(0) * (16 - len(message)%16)
+
 key = random.randint(0x1000000000000000000000000000000000000000000000000000000000000000,
                      0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff)
 print(f'Key: {hex(key)}')
-message = input('Message: ')
-message += chr(0) * (16 - len(message)%16)
+expandedKeys = keyExpansion(key)
 
-keys = keyExpansion(key)
+snippets = [message[i:i+16] for i in range(0, len(message), 16)]
 
+outputs = []
+for snippet in snippets:
+    outputs.append(AESEncode(expandedKeys, snippet))
 
+out = ''
+for i in outputs:
+    out += i
+    out += ' '
+print(f'Ciphertext: {out}')
