@@ -141,8 +141,15 @@ inverseSBoxLookup = [[52, 0x9, 0x6a, 0xd5, 0x30, 0x36, 0xa5, 0x38, 0xbf, 0x40, 0
                      [0x17, 0x2b, 0x4, 0x7e, 0xba, 0x77, 0xd6, 0x26, 0xe1, 0x69, 0x14, 0x63, 0x55, 0x21, 0x0c, 0x7d]]
 
 
-key = 0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
-state = [[180, 192, 23, 92], [37, 174, 219, 168], [12, 47, 67, 88], [179, 230, 97, 154]]
+key = 0x673b9f361abf1b0960acb9c2607e3f4510729db79d4bc4f86bf549e03aec6ac1
+cipherText = '75 6c 0a 91 da 2c d0 bf 61 c1 18 95 97 e2 c6 b7'
+cipherText = cipherText.split(' ')
+state = []
+for i in range(0, 16, 4):
+    state.append([])
+    for j in range(4):
+        state[-1].append(int(cipherText[i + j], 16))
+
 keys = keyExpansion(key)[::-1]
 keyIndex = 0
 
@@ -159,3 +166,9 @@ for i in range(13):
     state = unsubBytes(state)
 
 state = addRoundKey(state, keys[keyIndex])
+out = ''
+for i in state:
+    for j in i:
+        out += chr(j)
+out.strip(chr(0))
+print(out)
