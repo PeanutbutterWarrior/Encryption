@@ -1,4 +1,7 @@
 # AES 256
+import random
+
+
 def keyExpansion(key):
     def rotWord(word):
         return word[1:] + [word[0]]
@@ -123,8 +126,13 @@ sBoxLookup = [[0x63, 0x7c, 0x77, 0x7b, 0xf2, 0x6b, 0x6f, 0xc5, 0x30, 0x1, 0x67, 
               [0xe1, 0xf8, 0x98, 0x11, 0x69, 0xd9, 0x8e, 0x94, 0x9b, 0x1e, 0x87, 0xe9, 0xce, 0x55, 0x28, 0xdf],
               [0x8c, 0xa1, 0x89, 0x0d, 0xbf, 0xe6, 0x42, 0x68, 0x41, 0x99, 0x2d, 0x0f, 0xb0, 0x54, 0xbb, 0x16]]
 
-key = 0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
-message = 'Hello, World! 12'
+key = random.randint(0x1000000000000000000000000000000000000000000000000000000000000000,
+                     0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff)
+print(f'Key: {hex(key)}')
+message = input('Message: ')
+if len(message) > 16:
+    print('Message too long')
+message += ' ' * (16 - len(message))
 
 keys = keyExpansion(key)
 state = messageToState(message)
@@ -138,10 +146,15 @@ for i in range(13):
     state = mixColumns(state)
     state = addRoundKey(state, keys[keyIndex])
     keyIndex += 1
-
 state = subBytes(state)
 state = shiftRows(state)
 state = addRoundKey(state, keys[keyIndex])
+output = []
 for i in state:
     for j in i:
-        print(hex(j)[2:])
+        out = hex(j)[2:]
+        if len(out) == 1:
+            out = '0' + out
+        output.append(out)
+
+print(f'Ciphertext: {" ".join(output)}')
