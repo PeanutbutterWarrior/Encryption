@@ -132,7 +132,7 @@ print(f'Key: {hex(key)}')
 message = input('Message: ')
 if len(message) > 16:
     print('Message too long')
-message += ' ' * (16 - len(message))
+message += chr(0) * (16 - len(message))
 
 keys = keyExpansion(key)
 state = messageToState(message)

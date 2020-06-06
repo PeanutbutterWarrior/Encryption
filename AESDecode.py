@@ -141,8 +141,8 @@ inverseSBoxLookup = [[52, 0x9, 0x6a, 0xd5, 0x30, 0x36, 0xa5, 0x38, 0xbf, 0x40, 0
                      [0x17, 0x2b, 0x4, 0x7e, 0xba, 0x77, 0xd6, 0x26, 0xe1, 0x69, 0x14, 0x63, 0x55, 0x21, 0x0c, 0x7d]]
 
 
-key = 0x673b9f361abf1b0960acb9c2607e3f4510729db79d4bc4f86bf549e03aec6ac1
-cipherText = '75 6c 0a 91 da 2c d0 bf 61 c1 18 95 97 e2 c6 b7'
+key = 0x704801912b4964cdc066f29043d9a2e07867d1da5446df8a3b644f28b6625e8e
+cipherText = 'fb 86 ac ac 76 36 9c b2 9c 8e 31 b4 ac 1f e7 a0'
 cipherText = cipherText.split(' ')
 state = []
 for i in range(0, 16, 4):
@@ -170,5 +170,5 @@ out = ''
 for i in state:
     for j in i:
         out += chr(j)
-out.strip(chr(0))
+out = out.strip(chr(0))
 print(out)
