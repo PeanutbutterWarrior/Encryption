@@ -19,7 +19,7 @@ def keyExpansion(key):
         return out
 
     key = [int(hex(key)[i:i+2], 16) for i in range(2, len(hex(key)), 2)]
-    roundConstants = [[0x01, 0, 0, 0], [0x02, 0, 0, 0], [0x04, 0, 0, 0], [0x08, 0, 0, 0],
+    roundConstants = [None, [0x01, 0, 0, 0], [0x02, 0, 0, 0], [0x04, 0, 0, 0], [0x08, 0, 0, 0],
                       [0x10, 0, 0, 0], [0x20, 0, 0, 0], [0x40, 0, 0, 0], [0x80, 0, 0, 0]]
     N = 8
     keyWords = [[key[i], key[i+1], key[i+2], key[i+3]] for i in range(0, len(key), 4)]
@@ -66,8 +66,10 @@ def addRoundKey(state, key):
 def subBytes(state):
     for i, column in enumerate(state):
         for j, byte in enumerate(column):
-            hexByte = hex(byte)
-            state[i][j] = sBoxLookup[int(hexByte[2], 16)][int(hexByte[3], 16)]
+            hexByte = hex(byte)[2:]
+            if len(hexByte) == 1:
+                hexByte = '0' + hexByte
+            state[i][j] = sBoxLookup[int(hexByte[0], 16)][int(hexByte[1], 16)]
     return state
 
 
