@@ -88,19 +88,29 @@ def rotateState(state):
             rotatedState[row].append(state[column][row])
     return rotatedState
 
+
+def multiply(a, b):
+    p = 0
+    for i in range(8):
+        if b | 0b11111110 == 0xff:
+            p ^= a
+        aHighSet = a | 0b01111111 == 255
+        a <<= 1
+        if aHighSet:
+            a ^= 0x1b
+        b >>= 1
+    return p % 256
+
+
 def mixColumns(state):
-    rotated = rotateState(state)
-    constants = [[2, 3, 1, 1], [1, 2, 3, 1], [1, 1, 2, 3], [3, 1, 1, 2]]
-    for a, b in zip(rotated, constants):
-        c = [a[0] * b[0],
-             (a[1]*b[0]) ^ (a[0]*b[1]),
-             (a[2]*b[0]) ^ (a[1]*b[1]) ^ (a[0]*b[2]),
-             (a[3]*b[0]) ^ (a[2]*b[1]) ^ (a[1]*b[2]) ^ (a[0]*b[3]),
-             (a[3]*b[1]) ^ (a[2]*b[2]) ^ (a[1]*b[3]),
-             (a[3]*b[2]) ^ (a[2]*b[3]),
-             a[3]*b[3]]
-        d = [c[0] ^ c[4], c[1] ^ c[5], c[2] ^ c[6], c[3]]
-        print(d)
+    out = []
+    const = [[2, 3, 1, 1], [1, 2, 3, 1], [1, 1, 2, 3], [3, 1, 1, 2]]
+    for column in state:
+        newColumn = []
+        for a, b, c, d in const:
+            newColumn.append(multiply(a, column[0]) ^ multiply(b, column[1]) ^ multiply(c, column[2]) ^ multiply(d, column[3]))
+        out.append(newColumn)
+    return out
 
 sBoxLookup = [[0x63, 0x7c, 0x77, 0x7b, 0xf2, 0x6b, 0x6f, 0xc5, 0x30, 0x1, 0x67, 0x2b, 0xfe, 0xd7, 0xab, 0x76],
               [0xca, 0x82, 0xc9, 0x7d, 0xfa, 0x59, 0x47, 0xf0, 0xad, 0xd4, 0xa2, 0xaf, 0x9c, 0xa4, 0x72, 0xc0],
