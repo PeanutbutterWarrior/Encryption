@@ -106,6 +106,36 @@ def unmixColumns(state):
     return out
 
 
+def AESDecode(keys, cipherText):
+    state = []
+    for i in range(0, 16, 4):
+        state.append([])
+        for j in range(4):
+            state[-1].append(int(cipherText[i + j], 16))
+
+    keys = keys[::-1]
+    keyIndex = 0
+
+    state = addRoundKey(state, keys[keyIndex])
+    keyIndex += 1
+    state = unshiftRows(state)
+    state = unsubBytes(state)
+
+    for i in range(13):
+        state = addRoundKey(state, keys[keyIndex])
+        keyIndex += 1
+        state = unmixColumns(state)
+        state = unshiftRows(state)
+        state = unsubBytes(state)
+
+    state = addRoundKey(state, keys[keyIndex])
+    out = ''
+    for i in state:
+        for j in i:
+            out += chr(j)
+    return out
+
+
 sBoxLookup = [[0x63, 0x7c, 0x77, 0x7b, 0xf2, 0x6b, 0x6f, 0xc5, 0x30, 0x1, 0x67, 0x2b, 0xfe, 0xd7, 0xab, 0x76],
               [0xca, 0x82, 0xc9, 0x7d, 0xfa, 0x59, 0x47, 0xf0, 0xad, 0xd4, 0xa2, 0xaf, 0x9c, 0xa4, 0x72, 0xc0],
               [0xb7, 0xfd, 0x93, 0x26, 0x36, 0x3f, 0xf7, 0xcc, 0x34, 0xa5, 0xe5, 0xf1, 0x71, 0xd8, 0x31, 0x15],
@@ -144,31 +174,7 @@ inverseSBoxLookup = [[52, 0x9, 0x6a, 0xd5, 0x30, 0x36, 0xa5, 0x38, 0xbf, 0x40, 0
 key = 0x704801912b4964cdc066f29043d9a2e07867d1da5446df8a3b644f28b6625e8e
 cipherText = 'fb 86 ac ac 76 36 9c b2 9c 8e 31 b4 ac 1f e7 a0'
 cipherText = cipherText.split(' ')
-state = []
-for i in range(0, 16, 4):
-    state.append([])
-    for j in range(4):
-        state[-1].append(int(cipherText[i + j], 16))
 
-keys = keyExpansion(key)[::-1]
-keyIndex = 0
 
-state = addRoundKey(state, keys[keyIndex])
-keyIndex += 1
-state = unshiftRows(state)
-state = unsubBytes(state)
-
-for i in range(13):
-    state = addRoundKey(state, keys[keyIndex])
-    keyIndex += 1
-    state = unmixColumns(state)
-    state = unshiftRows(state)
-    state = unsubBytes(state)
-
-state = addRoundKey(state, keys[keyIndex])
-out = ''
-for i in state:
-    for j in i:
-        out += chr(j)
 out = out.strip(chr(0))
 print(out)
